@@ -1,0 +1,68 @@
+{
+  "name": "FitnessRPG - Votre Salle de Sport Gamifiée",
+  "short_name": "FitnessRPG",
+  "description": "Transformez vos entraînements en aventure RPG. Gagnez de l'XP, montez en niveau et devenez le héros de votre propre histoire fitness.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#6366f1",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "fr-FR",
+  "dir": "ltr",
+
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "/assets/screenshots/dashboard.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+
+  "categories": ["health", "lifestyle", "sports"],
+
+  "shortcuts": [
+    {
+      "name": "Nouvelle Séance",
+      "short_name": "Séance",
+      "description": "Commencer un nouvel entraînement",
+      "url": "/workout",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcut-workout.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Statistiques",
+      "short_name": "Stats",
+      "description": "Voir mes statistiques RPG",
+      "url": "/stats",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcut-stats.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+
+  "prefer_related_applications": false
+}
