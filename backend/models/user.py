@@ -27,9 +27,8 @@ class User(db.Model):
     last_sync = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     # Relations
-    workouts = db.relationship('Workout', back_populates='user')
-    exercises = db.relationship('Exercise', backref='user', lazy=True, cascade='all, delete-orphan')
     stats = db.relationship('UserStats', back_populates='user', uselist=False)
+    workouts = db.relationship('Workout', back_populates='user', uselist=True)
 
     def __init__(self, username, email, password_hash=None):
         self.username = username

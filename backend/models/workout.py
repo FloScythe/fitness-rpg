@@ -27,7 +27,9 @@ class Workout(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
     # Relations
-    workout_exercises = db.relationship('WorkoutExercise', backref='workout', lazy=True, cascade='all, delete-orphan')
+    user = db.relationship('User', back_populate = 'workouts', uselist = False)
+    workout_exercises = db.relationship('WorkoutExercise', back_populates='workout', uselist=True)
+    exercises = db.relationship('Exercise', back_populates='workouts', uselist=True)
 
     def __repr__(self):
         return f'<Workout {self.name} - {self.workout_date.date()}>'

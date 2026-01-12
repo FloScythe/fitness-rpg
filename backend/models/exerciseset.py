@@ -27,6 +27,9 @@ class ExerciseSet(db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
+    # Relations
+    workouts = db.relationship('Workout', back_populates='exercises', uselist=False)
+
     def __repr__(self):
         return f'<Set {self.set_number}: {self.weight_kg}kg × {self.reps}>'
 

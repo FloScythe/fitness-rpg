@@ -25,8 +25,7 @@ class UserStats(db.Model):
 
     calculated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    # On définit la relation inverse (optionnel, mais pratique)
-    # Le paramètre 'uselist=False' garantit que c'est une relation 1-à-1
+    # Relations
     user = db.relationship('User', back_populates='stats')
 
     def __repr__(self):

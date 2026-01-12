@@ -25,7 +25,8 @@ class WorkoutExercise(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     # Relations
-    sets = db.relationship('ExerciseSet', backref='workout_exercise', lazy=True, cascade='all, delete-orphan')
+    workout = db.relationship('Workout', back_populates='workout_exercises', uselist=False)
+    exercises = db.relationship('ExerciseSet', back_populates='workouts', uselist=True)
 
     def __repr__(self):
         return f'<WorkoutExercise {self.exercise.name} - {self.total_sets} sets>'
