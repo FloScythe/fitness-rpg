@@ -4,7 +4,7 @@ API pour sync Local-First (IndexedDB ↔ SQLite)
 """
 from flask import Blueprint, request, jsonify
 from datetime import datetime
-from models import db, User, Workout, WorkoutExercise, ExerciseSet, Exercise, SyncQueue
+from models import db, User, Workout, WorkoutExercise, ExerciseSet, exercise, SyncQueue
 from utils.auth import token_required
 from utils.calculations import (
     calculate_1rm, calculate_volume, calculate_xp,

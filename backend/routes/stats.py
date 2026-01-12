@@ -5,7 +5,7 @@ Calculs lourds côté serveur pour analytics avancés
 from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
 from sqlalchemy import func, desc
-from models import db, User, Workout, WorkoutExercise, ExerciseSet, Exercise
+from models import db, User, Workout, WorkoutExercise, ExerciseSet, exercise
 from utils.auth import token_required
 from utils.calculations import (
     calculate_strength_stat, calculate_endurance_stat,
