@@ -23,9 +23,9 @@ class UserStats(db.Model):
     heaviest_lift = db.Column(db.Float)
     best_1rm = db.Column(db.Float)
 
-    calculated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc()))
+    calculated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    # On définit la relation inverse (optionnel mais pratique)
+    # On définit la relation inverse (optionnel, mais pratique)
     # Le paramètre 'uselist=False' garantit que c'est une relation 1-à-1
     user = db.relationship('User', back_populates='stats')
 

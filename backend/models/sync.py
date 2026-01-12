@@ -25,7 +25,7 @@ class SyncQueue(db.Model):
     payload = db.Column(db.Text)  # JSON des données
     error_message = db.Column(db.Text)
 
-    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc()))
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     synced_at = db.Column(db.DateTime)
 
     def __repr__(self):

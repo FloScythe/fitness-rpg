@@ -10,7 +10,16 @@ from flask_cors import CORS
 # Import de la configuration
 from config import get_config
 # Import des modèles
-from models import db, Exercise
+from models import (
+    User,
+    UserStats,
+    Workout,
+    WorkoutExercise,
+    Exercise,
+    ExerciseSet,
+    SyncQueue,
+    db
+)
 from routes.exercises import exercises_bp
 from routes.stats import stats_bp
 # Import des routes

@@ -22,7 +22,7 @@ class WorkoutExercise(db.Model):
 
     # Métadonnées
     notes = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc()))
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     # Relations
     sets = db.relationship('ExerciseSet', backref='workout_exercise', lazy=True, cascade='all, delete-orphan')

@@ -25,7 +25,7 @@ class ExerciseSet(db.Model):
     is_pr = db.Column(db.Boolean, default=False)  # Personal Record (Boss Battle!)
     rest_seconds = db.Column(db.Integer)  # Temps de repos après cette série
 
-    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc()))
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'<Set {self.set_number}: {self.weight_kg}kg × {self.reps}>'

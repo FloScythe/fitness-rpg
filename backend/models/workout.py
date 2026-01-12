@@ -23,8 +23,8 @@ class Workout(db.Model):
     # Métadonnées
     notes = db.Column(db.Text)
     is_completed = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc()))
-    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc()), onupdate=datetime.now(timezone.utc()))
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
     # Relations
     workout_exercises = db.relationship('WorkoutExercise', backref='workout', lazy=True, cascade='all, delete-orphan')
