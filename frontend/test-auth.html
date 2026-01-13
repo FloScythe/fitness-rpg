@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Authentification - FitnessRPG</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1a1a2e;
+            color: #fff;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 { margin-bottom: 2rem; color: #6366f1; }
+        .card {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #2d3748;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #cbd5e0;
+        }
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #2d3748;
+            background: #0f172a;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        input:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        button:hover {
+            background: #4f46e5;
+        }
+        button:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+        }
+        .log {
+            background: #0f172a;
+            border: 1px solid #2d3748;
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        .log-entry {
+            padding: 0.25rem 0;
+            border-bottom: 1px solid #1e293b;
+        }
+        .log-success { color: #10b981; }
+        .log-error { color: #ef4444; }
+        .log-info { color: #3b82f6; }
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .status-online { background: #10b981; color: white; }
+        .status-offline { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Authentification</h1>
+
+        <!-- Status -->
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">Status Backend</h2>
+            <span id="backend-status" class="status status-offline">Vérification...</span>
+        </div>
+
+        <!-- Formulaire d'inscription -->
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">Inscription</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="reg-username" value="testuser" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="reg-email" value="test@test.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="reg-password" value="test123" required>
+                </div>
+                <button type="submit" id="register-btn">Créer le compte</button>
+            </form>
+        </div>
+
+        <!-- Formulaire de connexion -->
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">Connexion</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="login-username" value="testuser" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" value="test123" required>
+                </div>
+                <button type="submit" id="login-btn">Se connecter</button>
+            </form>
+        </div>
+
+        <!-- Logs -->
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">Logs</h2>
+            <div id="log" class="log"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+        const logEl = document.getElementById('log');
+        const statusEl = document.getElementById('backend-status');
+
+        // Fonction de log
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(`[${type.toUpperCase()}]`, message);
+        }
+
+        // Vérifier le backend
+        async function checkBackend() {
+            try {
+                log('Vérification du backend...', 'info');
+                const response = await fetch(`${API_URL}/api/health`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusEl.textContent = '✅ Online';
+                    statusEl.className = 'status status-online';
+                    log(`Backend online: ${data.message}`, 'success');
+                } else {
+                    throw new Error('Backend responded with error');
+                }
+            } catch (error) {
+                statusEl.textContent = '❌ Offline';
+                statusEl.className = 'status status-offline';
+                log(`Erreur backend: ${error.message}`, 'error');
+            }
+        }
+
+        // Inscription
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('register-btn');
+            btn.disabled = true;
+            btn.textContent = 'Inscription en cours...';
+
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+
+            log(`Tentative d'inscription: ${username}`, 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await response.json();
+
+                log(`Réponse HTTP: ${response.status}`, 'info');
+                log(`Données reçues: ${JSON.stringify(data)}`, 'info');
+
+                if (response.ok) {
+                    log('✅ Inscription réussie !', 'success');
+                    log(`Token JWT: ${data.token.substring(0, 50)}...`, 'success');
+                    log(`User UUID: ${data.user.uuid}`, 'success');
+                } else {
+                    log(`❌ Erreur: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Exception: ${error.message}`, 'error');
+                log(`Stack: ${error.stack}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Créer le compte';
+            }
+        });
+
+        // Connexion
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('login-btn');
+            btn.disabled = true;
+            btn.textContent = 'Connexion en cours...';
+
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            log(`Tentative de connexion: ${username}`, 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                log(`Réponse HTTP: ${response.status}`, 'info');
+                log(`Données reçues: ${JSON.stringify(data)}`, 'info');
+
+                if (response.ok) {
+                    log('✅ Connexion réussie !', 'success');
+                    log(`Token JWT: ${data.token.substring(0, 50)}...`, 'success');
+                    log(`User UUID: ${data.user.uuid}`, 'success');
+                } else {
+                    log(`❌ Erreur: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Exception: ${error.message}`, 'error');
+                log(`Stack: ${error.stack}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Se connecter';
+            }
+        });
+
+        // Vérifier au chargement
+        checkBackend();
+
+        log('🚀 Page de test chargée', 'success');
+        log('Entrez vos identifiants et cliquez sur "Créer le compte"', 'info');
+    </script>
+</body>
+</html>

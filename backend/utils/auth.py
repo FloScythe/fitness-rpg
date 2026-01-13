@@ -8,11 +8,15 @@ import jwt
 from datetime import datetime, timezone
 from functools import wraps
 from flask import request, jsonify, current_app, Blueprint
-
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
 from sqlalchemy.exc import IntegrityError
 
 from models import db, User
+
+# Initialiser le PasswordHasher Argon2
+ph = PasswordHasher()
 
 auth_bp = Blueprint('auth', __name__)
 

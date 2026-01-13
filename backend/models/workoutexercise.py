@@ -22,11 +22,12 @@ class WorkoutExercise(db.Model):
 
     # Métadonnées
     notes = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relations
-    workout = db.relationship('Workout', back_populates='workout_exercises', uselist=False)
-    exercises = db.relationship('ExerciseSet', back_populates='workouts', uselist=True)
+    workout = db.relationship('Workout', back_populates='workout_exercises')
+    exercise_info = db.relationship('Exercise', back_populates='workout_exercises')
+    sets = db.relationship('ExerciseSet', back_populates='workout_exercise', cascade='all, delete-orphan')
 
     def __repr__(self):
-        return f'<WorkoutExercise {self.exercise.name} - {self.total_sets} sets>'
+        return f'<WorkoutExercise {self.exercise_info.name} - {self.total_sets} sets>'

@@ -104,6 +104,11 @@
       title: 'Séance - FitnessRPG'
     });
 
+    // Séance active (en cours)
+    router.register('workout-active', renderWorkoutActive, {
+      title: 'Séance en cours - FitnessRPG'
+    });
+
     // Historique
     router.register('history', renderHistory, {
       title: 'Historique - FitnessRPG'
@@ -238,6 +243,296 @@
           </div>
         </section>
       </div>
+    `;
+  }
+
+  async function renderWorkoutActive() {
+    const workout = window.WorkoutManager.currentWorkout;
+
+    if (!workout) {
+      return `
+        <div class="container">
+          <div class="empty-state">
+            <h2 class="empty-state__title">Aucune séance en cours</h2>
+            <p class="empty-state__description">Démarrez une séance pour commencer</p>
+            <button class="btn btn--primary" onclick="router.navigate('workout')">
+              Nouvelle séance
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    const currentExercise = window.WorkoutManager.currentExercise;
+
+    return `
+      <div class="container">
+        <section class="section">
+          <!-- En-tête de la séance -->
+          <div class="card mb-4" style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));">
+            <div style="color: white;">
+              <h1 class="section__title" style="color: white; margin-bottom: 0.5rem;">${workout.name}</h1>
+              <div class="flex gap-4 text-sm">
+                <span>${workout.exercises.length} exercice${workout.exercises.length > 1 ? 's' : ''}</span>
+                <span>•</span>
+                <span>${Math.round(workout.totalVolume)} kg</span>
+                <span>•</span>
+                <span id="workout-duration">0 min</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exercice en cours -->
+          ${currentExercise ? `
+            <div class="card card--glow mb-6">
+              <div class="flex justify-between items-start mb-4">
+                <div>
+                  <h2 class="text-2xl font-bold mb-2">${currentExercise.exercise.name}</h2>
+                  <div class="flex gap-3 text-sm text-secondary">
+                    <span>${currentExercise.totalSets} série${currentExercise.totalSets > 1 ? 's' : ''}</span>
+                    <span>•</span>
+                    <span>${Math.round(currentExercise.totalVolume)} kg</span>
+                  </div>
+                </div>
+                <span class="badge badge--primary">XP ×${currentExercise.exercise.xpMultiplier}</span>
+              </div>
+
+              <!-- Formulaire d'ajout de série -->
+              <form id="add-set-form" class="mb-4">
+                <div class="grid grid--2 gap-4 mb-4">
+                  <div class="form-group">
+                    <label class="form-label">Poids (kg)</label>
+                    <input
+                      type="number"
+                      step="0.5"
+                      class="form-input"
+                      id="set-weight"
+                      placeholder="Ex: 80"
+                      required
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Répétitions</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="set-reps"
+                      placeholder="Ex: 10"
+                      required
+                      autocomplete="off"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group mb-4">
+                  <label class="form-label">RPE (optionnel) - Difficulté ressentie</label>
+                  <input
+                    type="range"
+                    min="6"
+                    max="10"
+                    step="0.5"
+                    class="form-range"
+                    id="set-rpe"
+                    value="8"
+                  />
+                  <div class="flex justify-between text-xs text-tertiary mt-1">
+                    <span>6 - Facile</span>
+                    <span id="rpe-value">8.0</span>
+                    <span>10 - Max</span>
+                  </div>
+                </div>
+
+                <div class="flex gap-2">
+                  <button type="submit" class="btn btn--primary btn--lg flex-1">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Ajouter la série
+                  </button>
+                  <button type="button" class="btn btn--secondary" onclick="toggleWarmup()" id="warmup-btn" title="Série d'échauffement">
+                    🔥
+                  </button>
+                </div>
+              </form>
+
+              <!-- Séries effectuées -->
+              <div id="sets-list">
+                ${currentExercise.sets.length > 0 ? `
+                  <div class="mb-3">
+                    <h3 class="text-sm font-semibold text-secondary mb-2">Séries effectuées</h3>
+                    ${currentExercise.sets.map(set => `
+                      <div class="flex justify-between items-center p-3 mb-2 rounded-lg ${set.isWarmup ? 'bg-warning/10' : 'bg-elevated'} border border-color">
+                        <div class="flex gap-4">
+                          <span class="font-bold">#${set.setNumber}</span>
+                          <span>${set.weight_kg} kg × ${set.reps}</span>
+                          ${set.rpe ? `<span class="text-xs text-tertiary">RPE ${set.rpe}</span>` : ''}
+                          ${set.isWarmup ? '<span class="badge badge--sm badge--warning">Échauffement</span>' : ''}
+                          ${set.isPR ? '<span class="badge badge--sm badge--danger">🏆 PR!</span>' : ''}
+                        </div>
+                        <div class="text-sm text-secondary">
+                          ${Math.round(set.volume)} kg
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : '<p class="text-sm text-tertiary text-center py-4">Aucune série effectuée</p>'}
+              </div>
+
+              <!-- Actions -->
+              <div class="flex gap-2 mt-4">
+                <button class="btn btn--success flex-1" onclick="finishExercise()">
+                  Terminer cet exercice
+                </button>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Liste des exercices de la séance -->
+          <div class="card mb-6">
+            <h3 class="text-lg font-bold mb-4">Exercices de la séance</h3>
+            ${workout.exercises.length > 0 ? `
+              <div class="flex flex-col gap-2">
+                ${workout.exercises.map((ex, idx) => `
+                  <div class="flex justify-between items-center p-3 rounded-lg ${ex === currentExercise ? 'bg-primary/10 border border-primary' : 'bg-elevated'}">
+                    <div>
+                      <div class="font-semibold">${ex.exercise.name}</div>
+                      <div class="text-xs text-tertiary">${ex.totalSets} série${ex.totalSets > 1 ? 's' : ''} • ${Math.round(ex.totalVolume)} kg</div>
+                    </div>
+                    ${ex === currentExercise ? '<span class="badge badge--primary">En cours</span>' : ''}
+                  </div>
+                `).join('')}
+              </div>
+            ` : '<p class="text-sm text-tertiary text-center py-4">Aucun exercice ajouté</p>'}
+
+            <button class="btn btn--secondary btn--block mt-4" onclick="router.navigate('workout')">
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Ajouter un exercice
+            </button>
+          </div>
+
+          <!-- Boutons d'action -->
+          <div class="flex gap-3 mb-6">
+            <button class="btn btn--success btn--lg flex-1" onclick="completeWorkout()">
+              <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Terminer la séance
+            </button>
+            <button class="btn btn--danger" onclick="cancelWorkout()">
+              <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <script>
+        // Gestion du formulaire d'ajout de série
+        let isWarmup = false;
+
+        document.getElementById('add-set-form')?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          await addSet();
+        });
+
+        // RPE slider
+        const rpeSlider = document.getElementById('set-rpe');
+        const rpeValue = document.getElementById('rpe-value');
+        if (rpeSlider && rpeValue) {
+          rpeSlider.addEventListener('input', (e) => {
+            rpeValue.textContent = parseFloat(e.target.value).toFixed(1);
+          });
+        }
+
+        // Mise à jour de la durée
+        const startTime = ${workout ? `new Date('${workout.workoutDate}').getTime()` : 'Date.now()'};
+        setInterval(() => {
+          const elapsed = Math.floor((Date.now() - startTime) / 60000);
+          const durationEl = document.getElementById('workout-duration');
+          if (durationEl) {
+            durationEl.textContent = elapsed + ' min';
+          }
+        }, 10000);
+
+        window.toggleWarmup = function() {
+          isWarmup = !isWarmup;
+          const btn = document.getElementById('warmup-btn');
+          if (btn) {
+            btn.classList.toggle('btn--warning', isWarmup);
+            btn.classList.toggle('btn--secondary', !isWarmup);
+          }
+        };
+
+        window.addSet = async function() {
+          const weight = parseFloat(document.getElementById('set-weight').value);
+          const reps = parseInt(document.getElementById('set-reps').value);
+          const rpe = parseFloat(document.getElementById('set-rpe').value);
+
+          if (!weight || !reps) {
+            window.NotificationManager.error('Veuillez remplir tous les champs');
+            return;
+          }
+
+          try {
+            await window.WorkoutManager.addSet(weight, reps, {
+              rpe: rpe,
+              isWarmup: isWarmup
+            });
+
+            window.NotificationManager.success('Série ajoutée !');
+
+            // Démarrer le timer de repos
+            if (!isWarmup) {
+              const restTime = 90; // 90 secondes par défaut
+              window.TimerManager.startTimer(restTime);
+            }
+
+            // Reset form
+            document.getElementById('add-set-form').reset();
+            document.getElementById('rpe-value').textContent = '8.0';
+            isWarmup = false;
+            document.getElementById('warmup-btn')?.classList.remove('btn--warning');
+            document.getElementById('warmup-btn')?.classList.add('btn--secondary');
+
+            // Recharger la page
+            await router.handleRoute();
+          } catch (error) {
+            console.error('Erreur:', error);
+            window.NotificationManager.error('Erreur lors de l\'ajout de la série');
+          }
+        };
+
+        window.finishExercise = function() {
+          window.WorkoutManager.currentExercise = null;
+          router.navigate('workout');
+        };
+
+        window.completeWorkout = async function() {
+          try {
+            const result = await window.WorkoutManager.completeWorkout();
+            window.NotificationManager.success(
+              \`Séance terminée ! +\${result.xpEarned} XP\`,
+              'Bravo !'
+            );
+            router.navigate('dashboard');
+          } catch (error) {
+            console.error('Erreur:', error);
+            window.NotificationManager.error(error.message);
+          }
+        };
+
+        window.cancelWorkout = function() {
+          if (confirm('Voulez-vous vraiment annuler cette séance ?')) {
+            window.WorkoutManager.cancelWorkout();
+            window.NotificationManager.info('Séance annulée');
+            router.navigate('dashboard');
+          }
+        };
+      </script>
     `;
   }
 
@@ -456,8 +751,10 @@
               localStorage.setItem('auth_token', data.token);
               window.NotificationManager.success('Connexion réussie !');
 
-              // Démarrer la sync auto
-              await window.SyncQueueManager.init();
+              // Démarrer la sync auto (non-bloquant)
+              window.SyncQueueManager.init().catch(err => {
+                console.warn('Sync init warning:', err);
+              });
 
               router.navigate('dashboard');
             } else {
@@ -533,8 +830,10 @@
               localStorage.setItem('auth_token', data.token);
               window.NotificationManager.success('Compte créé avec succès !');
 
-              // Démarrer la sync auto
-              await window.SyncQueueManager.init();
+              // Démarrer la sync auto (non-bloquant)
+              window.SyncQueueManager.init().catch(err => {
+                console.warn('Sync init warning:', err);
+              });
 
               router.navigate('dashboard');
             } else {

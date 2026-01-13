@@ -23,13 +23,11 @@ class Workout(db.Model):
     # Métadonnées
     notes = db.Column(db.Text)
     is_completed = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relations
-    user = db.relationship('User', back_populate = 'workouts', uselist = False)
-    workout_exercises = db.relationship('WorkoutExercise', back_populates='workout', uselist=True)
-    exercises = db.relationship('Exercise', back_populates='workouts', uselist=True)
-
+    user = db.relationship('User', back_populates='workouts')
+    workout_exercises = db.relationship('WorkoutExercise', back_populates='workout', cascade='all, delete-orphan')
     def __repr__(self):
         return f'<Workout {self.name} - {self.workout_date.date()}>'

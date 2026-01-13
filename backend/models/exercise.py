@@ -23,11 +23,11 @@ class Exercise(db.Model):
     is_custom = db.Column(db.Boolean, default=False)
     is_archived = db.Column(db.Boolean, default=False)
 
-    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     # Relations
-    workouts = db.relationship('Workout', back_populates='exercises', uselist=False)
+    workout_exercises = db.relationship('WorkoutExercise', back_populates='exercise_info')
 
     def __repr__(self):
         return f'<Exercise {self.name}>'
