@@ -1,0 +1,53 @@
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_stats")
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("workouts")
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("workout_exercises")
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("exercises")
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("exercise_sets")
+2026-01-13 21:44:38,247 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,248 INFO sqlalchemy.engine.Engine COMMIT
+2026-01-13 21:44:38,254 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-01-13 21:44:38,256 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT exercises.id AS exercises_id, exercises.uuid AS exercises_uuid, exercises.user_id AS exercises_user_id, exercises.name AS exercises_name, exercises.category AS exercises_category, exercises.muscle_group AS exercises_muscle_group, exercises.xp_multiplier AS exercises_xp_multiplier, exercises.stat_type AS exercises_stat_type, exercises.is_custom AS exercises_is_custom, exercises.is_archived AS exercises_is_archived, exercises.created_at AS exercises_created_at, exercises.updated_at AS exercises_updated_at 
+FROM exercises 
+WHERE exercises.is_custom = 0) AS anon_1
+2026-01-13 21:44:38,256 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-01-13 21:44:38,257 INFO sqlalchemy.engine.Engine ROLLBACK
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.98:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+2026-01-13 21:44:38,514 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-01-13 21:44:38,514 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2026-01-13 21:44:38,514 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("user_stats")
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("workouts")
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("workout_exercises")
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("exercises")
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("exercise_sets")
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-01-13 21:44:38,515 INFO sqlalchemy.engine.Engine COMMIT
+2026-01-13 21:44:38,521 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-01-13 21:44:38,523 INFO sqlalchemy.engine.Engine SELECT count(*) AS count_1 
+FROM (SELECT exercises.id AS exercises_id, exercises.uuid AS exercises_uuid, exercises.user_id AS exercises_user_id, exercises.name AS exercises_name, exercises.category AS exercises_category, exercises.muscle_group AS exercises_muscle_group, exercises.xp_multiplier AS exercises_xp_multiplier, exercises.stat_type AS exercises_stat_type, exercises.is_custom AS exercises_is_custom, exercises.is_archived AS exercises_is_archived, exercises.created_at AS exercises_created_at, exercises.updated_at AS exercises_updated_at 
+FROM exercises 
+WHERE exercises.is_custom = 0) AS anon_1
+2026-01-13 21:44:38,523 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ()
+2026-01-13 21:44:38,524 INFO sqlalchemy.engine.Engine ROLLBACK
+ * Debugger is active!
+ * Debugger PIN: 105-388-443
+127.0.0.1 - - [13/Jan/2026 21:44:39] "GET /api/health HTTP/1.1" 200 -
